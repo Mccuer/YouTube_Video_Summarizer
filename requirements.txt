@@ -1,0 +1,5 @@
+transformers 
+torch 
+librosa
+yt-dlp
+youtube_transcript_api
