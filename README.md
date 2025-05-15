@@ -1,58 +1,55 @@
-# YouTube Video Summarization Tool
-This tool provides functionality to generate transcripts from YouTube videos using either available captions or automatic speech recognition via Whisper.
+# YouTube to Podcast Generator
 
-## Overview
+A simple tool that turns YouTube videos into podcast-style audio narrations.
 
-This project is part 1 of a larger YouTube video summarization tool. The current implementation focuses on the transcription aspect, with more features coming soon.
+## What It Does
 
-## Features
+- Converts any YouTube video into a single-narrator podcast
+- Creates a natural-sounding script from the video's content
+- Generates audio you can listen to anywhere
+- Uses YouTube transcripts when available and uses Whisper as a fall back when they are not
 
-* Download audio from YouTube videos
-* Attempt to fetch existing captions from YouTube videos
-* Fall back to Whisper speech-to-text transcription when captions are unavailable
-* Process longer audio files by chunking them into manageable segments
-* Clean up temporary audio files automatically
+## Quick Setup
 
-## Installation
-
-Prerequisites
-* Python 3.7+
-* FFmpeg 
-
-FFmpeg is needed for yt_dlp, which allows us to get the audio from YouTube videos. The source repository can be found [here][1]. For simplicity I downloaded build 7.7.1 from [here][2]
+1. Make sure you have Python installed
+2. Install required packages:
+```bash
+pip install gradio pydub edge-tts ollama yt-dlp youtube-transcript-api transformers librosa
+```
+3. Download Ollama and the Mistral model:
+```bash
+# First install Ollama from https://ollama.com
+ollama pull mistral:7b
+```
+4. Download FFmpeg. FFmpeg is needed for yt_dlp, which allows us to get the audio from YouTube videos. The source repository can be found [here][1]. For simplicity I downloaded build 7.7.1 from [here][2]
 [1]: https://github.com/FFmpeg/FFmpeg
 [2]: https://www.gyan.dev/ffmpeg/builds/
 
-## Dependencies
+## How to Use
 
-Dependencies can be found in the requirements.txt file, or can be installed using the following command:
+1. Run the app:
+```bash
+python app.py
+```
 
-~~~
-pip install yt-dlp youtube-transcript-api transformers torch librosa
-~~~
+2. Open the web interface from the link that is generated
 
-## Usage
+3. Paste a YouTube URL and click "Submit"
 
-Basic usage is as follows:
+4. Listen to or download your generated podcast
 
-~~~~
-from transcription_generator import generate_transcript
+## How It Works
 
-# Generate transcript for a YouTube video
-video_url = "https://www.youtube.com/watch?v=I0-izyq6q5s"
-transcript = generate_transcript(video_url)
-print(transcript)
-~~~~
+1. Gets the transcript from YouTube (or creates one if not available)
+2. Uses a local LLM to rewrite the transcript as a podcast script
+3. Converts the script to speech using a natural-sounding voice
+4. Delivers an audio file ready for listening
 
-If you prefer to always use Whisper for transcription (even when YouTube captions are available), you can make the following change:
+## Customization
 
-~~~~
-from transcription_generator_whisper_only import generate_transcript
+You can change the narrator voice by editing the `NARRATOR_VOICE` variable in `app.py`.
 
-# Generate transcript for a YouTube video
-video_url = "https://www.youtube.com/watch?v=I0-izyq6q5s"
-transcript = generate_transcript(video_url)
-print(transcript)
-~~~~
+## Notes
 
-Please note whisper only mode takes much longer than checking for transcripts, but it is a useful fallback when captions are not available. Using Whisper only can mean that videos take minutes or hours to transcribe but is none the less a fun exercise. Whisper only mode will print chunks as they are transcribed to ensure that it is functioning properly.
+1. Current output quality is limited by the model being used due to the available memory I have. Using a larger model, or an API for an LLM, will greatly enhance the quality of podcast generated.
+2. Whisper generation is very slow, due to the fact that the audio file must be downloaded and then converted to text in 30 second intervals. This is a good proof of concept but not practicle for actual usage
